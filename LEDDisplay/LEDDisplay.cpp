@@ -5,11 +5,13 @@
 */
 #include <Arduino.h>
 #include <LEDDisplay.h>
+#define SEGMENT_PINS_LENGTH 7
+#define DIGIT_COUNT 4
 
 LEDDisplay::LEDDisplay(int segmentPins[], int digitSelectPins[], int decimalPointPin) {
 	// Assign each attribute to parameter passed
-	// segmentPins sequence - [A,B,C,D,E,F,G]
-	// digitSelectPins sequence - [Digit1, Digit2, Digit3, Digit4]
+	// segmentPins sequence - {A,B,C,D,E,F,G}
+	// digitSelectPins sequence - {Digit1, Digit2, Digit3, Digit4}
 	
 	this->segmentPins = segmentPins;
 	this->digitSelectPins = digitSelectPins;
@@ -22,23 +24,24 @@ LEDDisplay::LEDDisplay(int segmentPins[], int digitSelectPins[], int decimalPoin
 void LEDDisplay::setupPins() {
 	pinMode(decimalPointPin, OUTPUT);
 	
-	for (int pin : digitSelectPins) {
-		pinMode(pin, OUTPUT);
+	for (int i = 0; i < SEGMENT_PINS_LENGTH; i++) {
+		pinMode(segmentPins[i], OUTPUT);
 	}
 	
-	for (int pin : segmentPins) {
-		pinMode(pin, OUTPUT);
+	for (int i = 0; i < DIGIT_COUNT; i++) {
+		pinMode(digitSelectPins[i], OUTPUT);
 	}
 }
 
 void LEDDisplay::clear() {
 	// Clears the display 
-	for (int pin : digitSelectPins) {
-		digitalWrite(pin, HIGH);
+	
+	for (int i = 0; i < SEGMENT_PINS_LENGTH; i++) {
+		digitalWrite(segmentPins[i], LOW);
 	}
 	
-	for (int pin : segmentPins) {
-		digitalWrite(pin, LOW);
+	for (int i = 0; i < DIGIT_COUNT; i++) {
+		digitalWrite(digitSelectPins[i], HIGH);
 	}
 }
 
@@ -63,6 +66,7 @@ void LEDDisplay::activateSegments(int number) {
 		digitalWrite(segmentPins[4], HIGH);
 		digitalWrite(segmentPins[6], HIGH);
 		digitalWrite(segmentPins[3], HIGH);
+	}
 	else if (number == 3) {
 		digitalWrite(segmentPins[0], HIGH);
 		digitalWrite(segmentPins[1], HIGH);
@@ -304,7 +308,7 @@ void LEDDisplay::display(int number) {
 	
 	if (secondDigit == 0 && thirdDigit == 0 && fourthDigit == 0) {
 		// Do not display number with leading zeros
-		return
+		return;
 	}
 	
 	activateSegments(secondDigit);
@@ -314,7 +318,7 @@ void LEDDisplay::display(int number) {
 	clear();
 	
 	if (thirdDigit == 0 && fourthDigit == 0) {
-		return
+		return;
 	}
 	
 	activateSegments(thirdDigit);
@@ -324,7 +328,7 @@ void LEDDisplay::display(int number) {
 	clear();
 	
 	if (fourthDigit == 0) {
-		return
+		return;
 	}
 	
 	activateSegments(fourthDigit);

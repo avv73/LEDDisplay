@@ -18,8 +18,8 @@ public:
 	
     void clear();
 private:
-	int segmentPins[];
-	int digitSelectPins[];
+	int* segmentPins;
+	int* digitSelectPins;
 	int decimalPointPin;
 	
 	void setupPins();
