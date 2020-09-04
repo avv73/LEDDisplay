@@ -7,16 +7,16 @@
 
 class LEDDisplay {
 public:
-    LEDDisplay(int segmentPins[], int digitSelectPins[], int decimalPointPin);
+	LEDDisplay(int segmentPins[], int digitSelectPins[], int decimalPointPin);
 	
-    void display(String textToDisplay);
-    void display(String textToDisplay, bool decimalPointFlags[]);
-    void display(char textToDisplay[]);
-    void display(char textToDisplay[], bool decimalPointFlags[]);
-    void display(int number);
-    void display(int number, bool decimalPointFlags[]);
+	void display(String textToDisplay);
+    	void display(String textToDisplay, bool decimalPointFlags[]);
+    	void display(char textToDisplay[]);
+    	void display(char textToDisplay[], bool decimalPointFlags[]);
+    	void display(int number);
+    	void display(int number, bool decimalPointFlags[]);
 	
-    void clear();
+    	void clear();
 private:
 	int* segmentPins;
 	int* digitSelectPins;
