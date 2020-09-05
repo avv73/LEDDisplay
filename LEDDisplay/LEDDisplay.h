@@ -18,6 +18,8 @@ public:
 	
     	void clear();
 private:
+	bool* internalFalseArr;
+
 	int* segmentPins;
 	int* digitSelectPins;
 	int decimalPointPin;

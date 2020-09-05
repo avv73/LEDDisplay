@@ -17,6 +17,8 @@ LEDDisplay::LEDDisplay(int* segmentPins, int* digitSelectPins, int decimalPointP
 	this->digitSelectPins = digitSelectPins;
 	this->decimalPointPin = decimalPointPin;
 	
+	this->internalFalseArr = new bool[4] {false, false, false, false};
+	
 	// Sets all pins to output
 	setupPins();
 }
@@ -288,7 +290,7 @@ void LEDDisplay::activateSegments(char ch) {
 void LEDDisplay::display(int number) {
 	// Displays a number in range 0 to 9999.
 	
-	display(number, new bool[4] {false, false, false, false});
+	display(number, internalFalseArr);
 }
 
 void LEDDisplay::display(int number, bool* decimalPointFlags) {
@@ -357,4 +359,28 @@ void LEDDisplay::display(int number, bool* decimalPointFlags) {
 	digitalWrite(digitSelectPins[0], LOW);
 	delay(5);
   
+}
+
+void LEDDisplay::display(char* textToDisplay) {
+	// Displays a symbol array with 4 elements.
+	// Note that not every ASCII symbol is representable in 7 segment form, in such case the symbol in question will be omitted.
+	
+	display(textToDisplay, internalFalseArr);
+}
+
+void LEDDisplay::display(char* textToDisplay, bool* decimalPointFlags) {
+	// Displays a symbol array with 4 elements and sets decimal point at each flag that equals true. Each digit is represented by the index
+	// of the flag in the array. For example decimalPointFlags[1] is the flag for digit 2.
+	// Note that not every ASCII symbol is representable in 7 segment form, in such case the symbol in question will be omitted.
+	
+	for (int i = 0; i < DIGIT_COUNT; i++) {
+		clear();
+		activateSegments(textToDisplay[i]);
+		if (decimalPointFlags[i]) {
+			digitalWrite(decimalPointPin, HIGH);
+		}
+		
+		digitalWrite(digitSelectPins[i], LOW);
+		delay(5);
+	}
 }
