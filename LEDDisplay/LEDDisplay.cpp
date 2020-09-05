@@ -17,7 +17,7 @@ LEDDisplay::LEDDisplay(int* segmentPins, int* digitSelectPins, int decimalPointP
 	this->digitSelectPins = digitSelectPins;
 	this->decimalPointPin = decimalPointPin;
 	
-	this->internalFalseArr = new bool[4] {false, false, false, false};
+	this->internalFalseArr = new bool[DIGIT_COUNT] {false, false, false, false};
 	
 	// Sets all pins to output
 	setupPins();
@@ -125,7 +125,7 @@ void LEDDisplay::activateSegments(int number) {
 
 void LEDDisplay::activateSegments(char ch) {
 	// Activates segments according to char passed, not every ASCII symbol
-	// is representable in 7 segment - in such case the method doesn't return anything
+	// is representable in 7 segment - in such case the method doesn't do anything
 	// Assumes segments are set to LOW
 	
 	if (isDigit(ch)) {
@@ -362,14 +362,14 @@ void LEDDisplay::display(int number, bool* decimalPointFlags) {
 }
 
 void LEDDisplay::display(char* textToDisplay) {
-	// Displays a symbol array with 4 elements.
+	// Displays a symbol array with max 4 elements.
 	// Note that not every ASCII symbol is representable in 7 segment form, in such case the symbol in question will be omitted.
 	
 	display(textToDisplay, internalFalseArr);
 }
 
 void LEDDisplay::display(char* textToDisplay, bool* decimalPointFlags) {
-	// Displays a symbol array with 4 elements and sets decimal point at each flag that equals true. Each digit is represented by the index
+	// Displays a symbol array with max 4 elements and sets decimal point at each flag that equals true. Each digit is represented by the index
 	// of the flag in the array. For example decimalPointFlags[1] is the flag for digit 2.
 	// Note that not every ASCII symbol is representable in 7 segment form, in such case the symbol in question will be omitted.
 	
@@ -383,4 +383,23 @@ void LEDDisplay::display(char* textToDisplay, bool* decimalPointFlags) {
 		digitalWrite(digitSelectPins[i], LOW);
 		delay(5);
 	}
+}
+
+void LEDDisplay::display(String textToDisplay) {
+	// Displays a string with max length of 4. 
+	// Note that not every ASCII symbol is representable in 7 segment form, in such case the symbol in question will be omitted.
+	
+	display(textToDisplay, internalFalseArr);
+}
+
+void LEDDisplay::display(String textToDisplay, bool* decimalPointFlags) {
+	// Displays a string with max length of 4 and sets decimal point at each flag that equals true. Each digit is represented by the index
+	// of the flag in the array. For example decimalPointFlags[1] is the flag for digit 2.
+	// Note that not every ASCII symbol is representable in 7 segment form, in such case the symbol in question will be omitted.
+	
+	char* buffer = new char[DIGIT_COUNT]{' ', ' ', ' ', ' '};
+	textToDisplay.toCharArray(buffer, DIGIT_COUNT);
+	display(buffer, decimalPointFlags);
+	
+	delete buffer;
 }
