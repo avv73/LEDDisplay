@@ -8,7 +8,7 @@
 #define SEGMENT_PINS_LENGTH 7
 #define DIGIT_COUNT 4
 
-LEDDisplay::LEDDisplay(int segmentPins[], int digitSelectPins[], int decimalPointPin) {
+LEDDisplay::LEDDisplay(int* segmentPins, int* digitSelectPins, int decimalPointPin) {
 	// Assign each attribute to parameter passed
 	// segmentPins sequence - {A,B,C,D,E,F,G}
 	// digitSelectPins sequence - {Digit1, Digit2, Digit3, Digit4}
@@ -43,6 +43,8 @@ void LEDDisplay::clear() {
 	for (int i = 0; i < DIGIT_COUNT; i++) {
 		digitalWrite(digitSelectPins[i], HIGH);
 	}
+	
+	digitalWrite(decimalPointPin, LOW);
 }
 
 void LEDDisplay::activateSegments(int number) {
@@ -284,14 +286,22 @@ void LEDDisplay::activateSegments(char ch) {
 }
 
 void LEDDisplay::display(int number) {
-	// Check that the number is in possible range to display
+	// Displays a number in range 0 to 9999.
+	
+	display(number, new bool[4] {false, false, false, false});
+}
+
+void LEDDisplay::display(int number, bool* decimalPointFlags) {
+	// Displays a number in range 0 to 9999 and sets decimal point at each flag that equals true. Each digit is represented by the index
+	// of the flag in the array. For example decimalPointFlags[1] is the flag for digit 2.
+	// On a N digit number, only N decimal points can be shown.
 	
 	if (number < 0 || number > 9999) {
 		return;
 	}
-	
+  
 	clear();
-	
+  
 	int firstDigit = number % 10;
 	number /= 10;
 	int secondDigit = number % 10;
@@ -299,39 +309,52 @@ void LEDDisplay::display(int number) {
 	int thirdDigit = number % 10;
 	number /= 10;
 	int fourthDigit = number % 10;
-	
+  
 	activateSegments(firstDigit);
+	if (decimalPointFlags[0]) {
+		digitalWrite(decimalPointPin, HIGH);
+	}
 	digitalWrite(digitSelectPins[3], LOW);
 	delay(5);
-	
+  
 	clear();
-	
+  
 	if (secondDigit == 0 && thirdDigit == 0 && fourthDigit == 0) {
 		// Do not display number with leading zeros
 		return;
 	}
-	
+  
 	activateSegments(secondDigit);
+	if (decimalPointFlags[1]) {
+		digitalWrite(decimalPointPin, HIGH);
+	}
 	digitalWrite(digitSelectPins[2], LOW);
 	delay(5);
-	
+  
 	clear();
-	
+  
 	if (thirdDigit == 0 && fourthDigit == 0) {
 		return;
 	}
-	
+  
 	activateSegments(thirdDigit);
+	if (decimalPointFlags[2]) {
+		digitalWrite(decimalPointPin, HIGH);
+	}
 	digitalWrite(digitSelectPins[1], LOW);
 	delay(5);
-	
+  
 	clear();
-	
+  
 	if (fourthDigit == 0) {
 		return;
 	}
-	
+  
 	activateSegments(fourthDigit);
+	if (decimalPointFlags[3]) {
+		digitalWrite(decimalPointPin, HIGH);
+	}
 	digitalWrite(digitSelectPins[0], LOW);
 	delay(5);
+  
 }
